@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Rezervasyon Detayı{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Anasayfa</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'user_reservations' %}">Rezervasyonlarım</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Rezervasyon Detayı</li>
+        </ol>
+    </nav>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h1 class="h3 mb-0">Rezervasyon Detayı</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Etkinlik Bilgileri</h4>
+                    <table class="table">
+                        <tr>
+                            <th>Etkinlik:</th>
+                            <td>{{ reservation.event.title }}</td>
+                        </tr>
+                        <tr>
+                            <th>Tarih:</th>
+                            <td>{{ reservation.event.event_date|date:"d F Y, H:i" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Konum:</th>
+                            <td>{{ reservation.event.location }}, {{ reservation.event.city }}</td>
+                        </tr>
+                        <tr>
+                            <th>Fiyat:</th>
+                            <td>{{ reservation.event.price }} TL</td>
+                        </tr>
+                    </table>
+                    
+                    <h4 class="mt-4">Rezervasyon Bilgileri</h4>
+                    <table class="table">
+                        <tr>
+                            <th>Rezervasyon Kodu:</th>
+                            <td>{{ reservation.reservation_code }}</td>
+                        </tr>
+                        <tr>
+                            <th>Rezervasyon Tarihi:</th>
+                            <td>{{ reservation.created_at|date:"d F Y, H:i" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Durum:</th>
+                            <td><span class="badge bg-success">Onaylandı</span></td>
+                        </tr>
+                    </table>
+                    
+                    <a href="{% url 'event_detail' reservation.event.id %}" class="btn btn-outline-primary">Etkinlik Detayı</a>
+                    <a href="{% url 'user_reservations' %}" class="btn btn-outline-secondary">Tüm Rezervasyonlarım</a>
+                </div>
+                
+                <div class="col-md-6 text-center">
+                    <h4>QR Kod</h4>
+                    <p class="text-muted">Bu QR kodu etkinliğe giriş yaparken gösterin</p>
+                    
+                    <div class="qr-code-container">
+                        {% if reservation.qr_code %}
+                            <img src="{{ reservation.qr_code.url }}" alt="QR Kod" class="img-fluid">
+                        {% else %}
+                            <div class="alert alert-warning">
+                                QR kod oluşturma işlemi başarısız oldu. Lütfen site yöneticisiyle iletişime geçin.
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="alert alert-info mt-3">
+                        <h5 class="alert-heading">Katılım Bilgileri</h5>
+                        <p>Lütfen etkinliğe katılırken QR kodunuzu ve kimliğinizi yanınızda bulundurunuz.</p>
+                        <p class="mb-0">Etkinlik günü geldiğinde, giriş kapısında QR kodunuzun taratılması gerekmektedir.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

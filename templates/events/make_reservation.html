@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Rezervasyon Yap - {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Anasayfa</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'event_list' %}">Etkinlikler</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'event_detail' event.id %}">{{ event.title }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Rezervasyon Yap</li>
+        </ol>
+    </nav>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h1 class="h3 mb-0">Rezervasyon Onayı</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-7">
+                    <h4 class="mb-3">Etkinlik Detayları</h4>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ event.title }}</h5>
+                            <p class="card-text">{{ event.description|truncatechars:200 }}</p>
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item"><i class="bi bi-calendar"></i> {{ event.event_date|date:"d F Y, H:i" }}</li>
+                                <li class="list-group-item"><i class="bi bi-geo-alt"></i> {{ event.location }}, {{ event.city }}</li>
+                                <li class="list-group-item"><i class="bi bi-people"></i> Kalan Kapasite: {{ event.available_seats }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-5">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Ödeme Özeti</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Bilet Ücreti:</span>
+                                <strong>{{ event.price }} TL</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
+                                <span>KDV (%18):</span>
+                                <strong>{{ event.price|floatformat:2 }} TL x 0.18 = {{ event.price|floatformat:2 }} TL</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Toplam Ücret:</span>
+                                <strong class="text-primary">{{ event.price }} TL</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <span>Mevcut Bakiyeniz:</span>
+                                <strong>{{ user.balance }} TL</strong>
+                            </div>
+                            
+                            {% if user.balance < event.price %}
+                                <div class="alert alert-danger">
+                                    <strong>Yetersiz Bakiye!</strong> Bu rezervasyonu yapmak için bakiye yüklemeniz gerekmektedir.
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'add_balance' %}" class="btn btn-primary">Bakiye Yükle</a>
+                                    <a href="{% url 'event_detail' event.id %}" class="btn btn-outline-secondary">Geri Dön</a>
+                                </div>
+                            {% else %}
+                                <form method="post" class="reservation-form">
+                                    {% csrf_token %}
+                                    {{ form }}
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-success">Rezervasyon Yap</button>
+                                        <a href="{% url 'event_detail' event.id %}" class="btn btn-outline-secondary">İptal</a>
+                                    </div>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

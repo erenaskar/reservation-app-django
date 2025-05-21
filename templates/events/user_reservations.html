@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Rezervasyonlarım{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Rezervasyonlarım</h1>
+    
+    {% if reservations %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Etkinlik</th>
+                        <th>Tarih</th>
+                        <th>Konum</th>
+                        <th>Fiyat</th>
+                        <th>Rezervasyon Tarihi</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in reservations %}
+                        <tr>
+                            <td>{{ reservation.event.title }}</td>
+                            <td>{{ reservation.event.event_date|date:"d F Y, H:i" }}</td>
+                            <td>{{ reservation.event.location }}, {{ reservation.event.city }}</td>
+                            <td>{{ reservation.event.price }} TL</td>
+                            <td>{{ reservation.created_at|date:"d.m.Y" }}</td>
+                            <td>
+                                <a href="{% url 'reservation_detail' reservation.id %}" class="btn btn-sm btn-primary">Detay</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Henüz rezervasyon yapmadınız. <a href="{% url 'event_list' %}">Etkinliklere göz atın</a> ve rezervasyon yapın.
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

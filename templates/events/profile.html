@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card profile-header mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h1 class="h3 mb-3">{{ user.get_full_name|default:user.username }}</h1>
+                            <p><strong>Kullanıcı adı:</strong> {{ user.username }}</p>
+                            <p><strong>E-posta:</strong> {{ user.email }}</p>
+                            <p><strong>Üyelik tarihi:</strong> {{ user.date_joined|date:"d F Y" }}</p>
+                            <p><strong>Rol:</strong> {{ user.get_role_display }}</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="balance-container mt-3">
+                                <h6 class="text-muted">Mevcut Bakiye</h6>
+                                <div class="balance-display">{{ user.balance }} TL</div>
+                                <a href="{% url 'add_balance' %}" class="btn btn-primary btn-sm mt-2">Bakiye Yükle</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Son Rezervasyonlar</h5>
+                </div>
+                <div class="card-body">
+                    {% with user_reservations=user.reservations.all|slice:":5" %}
+                        {% if user_reservations %}
+                            <div class="list-group">
+                                {% for reservation in user_reservations %}
+                                    <a href="{% url 'reservation_detail' reservation.id %}" class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1">{{ reservation.event.title }}</h5>
+                                            <small>{{ reservation.created_at|date:"d.m.Y" }}</small>
+                                        </div>
+                                        <p class="mb-1">{{ reservation.event.event_date|date:"d F Y, H:i" }}</p>
+                                        <small>{{ reservation.event.location }}, {{ reservation.event.city }}</small>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                            {% if user.reservations.count > 5 %}
+                                <div class="text-center mt-3">
+                                    <a href="{% url 'user_reservations' %}" class="btn btn-outline-primary btn-sm">Tüm Rezervasyonları Gör</a>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="alert alert-info">
+                                Henüz rezervasyon yapmadınız. <a href="{% url 'event_list' %}">Etkinliklere göz atın</a> ve rezervasyon yapın.
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Hızlı İşlemler</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="{% url 'add_balance' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-cash me-2"></i> Bakiye Yükle
+                        </a>
+                        <a href="{% url 'user_reservations' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-calendar-check me-2"></i> Rezervasyonlarım
+                        </a>
+                        <a href="{% url 'event_list' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-search me-2"></i> Etkinlik Ara
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Hesap Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">
+                        Hesap bilgilerinizi güncellemek veya hesabınızla ilgili yardım almak için lütfen site yöneticisiyle iletişime geçin.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

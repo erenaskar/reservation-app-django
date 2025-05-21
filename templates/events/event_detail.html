@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ event.title }} - Etkinlik Detayı{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Anasayfa</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'event_list' %}">Etkinlikler</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ event.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h1 class="h2 mb-0">{{ event.title }}</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h5 class="card-title">Etkinlik Bilgileri</h5>
+                    <p class="card-text">{{ event.description }}</p>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h5>Detaylar</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="bi bi-calendar"></i> Tarih/Saat:</span>
+                                    <span>{{ event.event_date|date:"d F Y, H:i" }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="bi bi-geo-alt"></i> Konum:</span>
+                                    <span>{{ event.location }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="bi bi-buildings"></i> Şehir:</span>
+                                    <span>{{ event.city }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="bi bi-cash"></i> Fiyat:</span>
+                                    <span class="badge bg-primary">{{ event.price }} TL</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="bi bi-people"></i> Kalan Kapasite:</span>
+                                    <span class="badge {% if event.is_full %}bg-danger{% else %}bg-success{% endif %}">
+                                        {{ event.available_seats }}
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            {% if user.is_authenticated %}
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Bilet Al</h5>
+                                        <p>Mevcut Bakiyeniz: <strong>{{ user.balance }} TL</strong></p>
+                                        
+                                        {% if user_has_reservation %}
+                                            <div class="alert alert-success">
+                                                Bu etkinlik için zaten bir rezervasyonunuz var!
+                                            </div>
+                                            <a href="{% url 'user_reservations' %}" class="btn btn-outline-primary">Rezervasyonlarım</a>
+                                        
+                                        {% elif event.is_full %}
+                                            <div class="alert alert-danger">
+                                                Bu etkinlik için tüm yerler dolmuştur.
+                                            </div>
+                                        
+                                        {% elif event.is_past %}
+                                            <div class="alert alert-warning">
+                                                Bu etkinlik geçmiştir.
+                                            </div>
+                                        
+                                        {% elif user.balance < event.price %}
+                                            <div class="alert alert-warning">
+                                                Bu etkinliği rezerve etmek için yeterli bakiyeniz yok.
+                                            </div>
+                                            <a href="{% url 'add_balance' %}" class="btn btn-primary">Bakiye Yükle</a>
+                                        
+                                        {% else %}
+                                            <form action="{% url 'make_reservation' event.id %}" method="post">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-success">Rezervasyon Yap</button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Bilet Al</h5>
+                                        <p>Rezervasyon yapabilmek için giriş yapmalısınız.</p>
+                                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary">Giriş Yap</a>
+                                        <a href="{% url 'register' %}?next={{ request.path }}" class="btn btn-outline-secondary">Kayıt Ol</a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Etkinlik Sahibi</h5>
+                            <p><strong>{{ event.creator.get_full_name }}</strong></p>
+                            <p class="text-muted">{{ event.creator.email }}</p>
+                            
+                            <h5 class="mt-4">Etkinlik Zamanı</h5>
+                            <p>{{ event.event_date|date:"l, d F Y" }}</p>
+                            <p>{{ event.event_date|date:"H:i" }}</p>
+                            
+                            <h5 class="mt-4">Oluşturulma Tarihi</h5>
+                            <p class="mb-0">{{ event.created_at|date:"d.m.Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

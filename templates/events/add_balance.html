@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Bakiye Yükle{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h1 class="h3 mb-0">Bakiye Yükle</h1>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-4">
+                        <p class="mb-0">Mevcut Bakiyeniz: <strong>{{ user.balance }} TL</strong></p>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.amount.id_for_label }}" class="form-label">{{ form.amount.label }}</label>
+                            {{ form.amount }}
+                            {% if form.amount.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.amount.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">{{ form.amount.help_text }}</div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        <h5>Ödeme Bilgileri</h5>
+                        <p class="text-muted mb-3 small">Bu bir simülasyondur. Gerçek kart bilgilerinizi kullanmayınız.</p>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.card_number.id_for_label }}" class="form-label">{{ form.card_number.label }}</label>
+                            {{ form.card_number }}
+                            {% if form.card_number.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.card_number.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.card_holder.id_for_label }}" class="form-label">{{ form.card_holder.label }}</label>
+                            {{ form.card_holder }}
+                            {% if form.card_holder.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.card_holder.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.expiry_date.id_for_label }}" class="form-label">{{ form.expiry_date.label }}</label>
+                                {{ form.expiry_date }}
+                                {% if form.expiry_date.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.expiry_date.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.cvv.id_for_label }}" class="form-label">{{ form.cvv.label }}</label>
+                                {{ form.cvv }}
+                                {% if form.cvv.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.cvv.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Bakiye Yükle</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
