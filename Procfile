@@ -1,1 +1,1 @@
-web: cd eventbooker && gunicorn eventbooker.wsgi:application --bind 0.0.0.0:$PORT 
+web: gunicorn eventbooker.wsgi:application --bind 0.0.0.0:$PORT 
