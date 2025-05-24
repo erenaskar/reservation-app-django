@@ -3,7 +3,7 @@
 set -o errexit
 
 # Set environment variables
-export PYTHONPATH=$PYTHONPATH:$(pwd)
+export PYTHONPATH=$PYTHONPATH:$(pwd)/eventbooker
 export DJANGO_SETTINGS_MODULE=eventbooker.settings
 
 # Install Python dependencies
