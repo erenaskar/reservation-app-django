@@ -86,6 +86,9 @@ WSGI_APPLICATION = 'eventbooker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Debug database URL
+print("DATABASE_URL:", os.getenv('DATABASE_URL'))
+
 DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL', 'sqlite:///db.sqlite3'),
